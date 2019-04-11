@@ -11,7 +11,7 @@ def list(request):
 def create(request):
     if request.method == "POST":
         # 작성된 post를 DB에 적용
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('posts:list')
