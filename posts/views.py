@@ -26,6 +26,8 @@ def read(request, post_id):
 
 def update(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
+    if post.user != request.user:
+        return redirect('post:list')
     if request.method == "POST":
         # 실제 DB에 수정 반영
         form = PostForm(request.POST, instance=post)
@@ -51,5 +53,7 @@ def update(request, post_id):
 # @require_POST
 def delete(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
+    if post.user != request.user:
+        return redirect('posts:list')
     post.delete()
     return redirect('posts:list')
