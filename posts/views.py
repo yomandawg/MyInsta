@@ -4,7 +4,7 @@ from .models import Post
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 # login_required
-# 1. 유저가 로그인 안했으면, 로그인창으로 보냄
+# 1. 유저가 로그인 안했으면, 로그인창으로 보냄 - default = accounts
 # 2. "https://sitback-sitback.c9users.io/accounts/login/?next=/posts/1/like"
 # next:로그인 되는 순간 like 하게 만들겠다. url 끝난다음에 어디로 가는지 고려
 
