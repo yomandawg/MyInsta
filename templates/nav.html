@@ -4,16 +4,26 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'accounts:login' %}">로그인</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'accounts:logout' %}">로그아웃</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-      </li>
+    <ul class="navbar-nav ml-auto">
+      <!-- 만약 로그인이 되어 있으면 -->
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">{{ user.username }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'accounts:logout' %}">로그아웃</a>
+        </li>
+      
+      <!-- 아니면 -->
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'accounts:login' %}">로그인</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'accounts:login' %}">회원가입</a>
+        </li>
+      
+      {% endif %}
     </ul>
   </div>
 </nav>

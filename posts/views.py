@@ -19,7 +19,9 @@ def create(request):
         # 작성된 post를 DB에 적용
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
             return redirect('posts:list')
     else: # GET
         # post를 작성하는 form을 보여줌
@@ -65,7 +67,7 @@ def delete(request, post_id):
     return redirect('posts:list')
     
     
-@login_required(redirect_field_name="posts:list") # session에 로그인이 안돼있으면 막음
+@login_required # session에 로그인이 안돼있으면 막음
 def like(request, post_id):
     # 1. like를 추가할 포스트를 가져옴
     post = get_object_or_404(Post, id=post_id)
