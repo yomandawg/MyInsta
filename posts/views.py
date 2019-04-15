@@ -2,6 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PostForm
 from .models import Post
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+# login_required
+# 1. 유저가 로그인 안했으면, 로그인창으로 보냄
+# 2. "https://sitback-sitback.c9users.io/accounts/login/?next=/posts/1/like"
+# next:로그인 되는 순간 like 하게 만들겠다. url 끝난다음에 어디로 가는지 고려
+
 
 # Create your views here.
 def list(request):
@@ -59,7 +65,7 @@ def delete(request, post_id):
     return redirect('posts:list')
     
     
-    
+@login_required(redirect_field_name="posts:list") # session에 로그인이 안돼있으면 막음
 def like(request, post_id):
     # 1. like를 추가할 포스트를 가져옴
     post = get_object_or_404(Post, id=post_id)
@@ -69,7 +75,7 @@ def like(request, post_id):
     #       like를 제거하고,
     #    아니면,
     #       like를 추가한다.
-    if request.user in post.like_user.all(): # 유저가 post.like_users.all() -> queryset 리스트 안에 있으면,
+    if request.user in post.like_users.all(): # 유저가 post.like_users.all() -> queryset 리스트 안에 있으면,
         post.like_users.remove(request.user) # like 해제
     else:
         post.like_users.add(request.user)
