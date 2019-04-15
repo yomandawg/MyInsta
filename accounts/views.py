@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login as auth_login # django에서 가져와 씀
 from django.contrib.auth import logout as auth_logout
 
@@ -25,3 +25,18 @@ def logout(request):
     auth_logout(request)
     return redirect('posts:list')
     
+def signup(request):
+    if request.method == "POST":
+        # POST: 유저 등록
+        form = UserCreationForm(request.POST) # UserCreationForm이 알아서 column에 넣어주고
+        if form.is_valid():
+            user = form.save()
+            # auth_login(request, form.get_user()) 로그인과 달리 form 형식 달라서 이거 안됨
+            auth_login(request, user) # signup 후 바로 로그인
+            redirect('posts:list')
+    else:
+        # GET: 유저 정보 입력
+        form = UserCreationForm()
+        
+    return render(request, 'accounts/signup.html', {'form': form})
+        
