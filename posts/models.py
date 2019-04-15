@@ -7,7 +7,12 @@ class Post(models.Model):
     content = models.CharField(max_length=150)
     image = models.ImageField(blank=True)
     # user = models.ForeignKey(User, on_delete=models.CASCADE) #User 폼 변경하려면 상속받아서 다르게 짜야함
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # user foreign_key를 불러오므로 user_id 키가 있을 것
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_posts", blank=True) # user와 M:M 관계
+    # M:M은 쌍방향이라 어느쪽에 테이블을 만들어도 상관 없음; users에 넣어도 됨(초기 설계단계에서 설정) # related_name에 양쪽 다 조회할 수 있게끔 이름 설정
+    # users like 가 문법적으로 맞지만 users model을 접근하기가 일단 어렵기 때문에 이렇게 함
+    
+    
     
     def __str__(self):
         return self.content

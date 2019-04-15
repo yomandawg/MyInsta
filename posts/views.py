@@ -57,3 +57,21 @@ def delete(request, post_id):
         return redirect('posts:list')
     post.delete()
     return redirect('posts:list')
+    
+    
+    
+def like(request, post_id):
+    # 1. like를 추가할 포스트를 가져옴
+    post = get_object_or_404(Post, id=post_id)
+    # post = Post.objects.get(id=post_id)
+    
+    # 2. 만약 유저가 해당 post를 이미 like 했다면,
+    #       like를 제거하고,
+    #    아니면,
+    #       like를 추가한다.
+    if request.user in post.like_user.all(): # 유저가 post.like_users.all() -> queryset 리스트 안에 있으면,
+        post.like_users.remove(request.user) # like 해제
+    else:
+        post.like_users.add(request.user)
+        
+    return redirect('posts:list')

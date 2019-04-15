@@ -9,4 +9,5 @@ urlpatterns = [
     path('<int:post_id>/', views.read, name="read"),
     path('<int:post_id>/update', views.update, name="update"),
     path('<int:post_id>/delete', views.delete, name="delete"),
+    path('<int:post_id>/like', views.like, name="like"), # url엔 post_id만 넘겨주고, user관한 정보는 view에서 처리
 ]
