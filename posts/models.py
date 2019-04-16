@@ -12,7 +12,15 @@ class Post(models.Model):
     # M:M은 쌍방향이라 어느쪽에 테이블을 만들어도 상관 없음; users에 넣어도 됨(초기 설계단계에서 설정) # related_name에 양쪽 다 조회할 수 있게끔 이름 설정
     # users like 가 문법적으로 맞지만 users model을 접근하기가 일단 어렵기 때문에 이렇게 함
     
-    
+    def __str__(self):
+        return self.content
+        
+        
+class Comment(models.Model):
+    content = models.CharField(max_length=100)
+    # 두 개의 Foreign key를 갖게됨
+    post = models.ForeignKey(Post, on_delete=models.CASCADE) # 어떤 모델을 참조하고 있는지
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.content

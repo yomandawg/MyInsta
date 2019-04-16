@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PostForm
-from .models import Post
+from .forms import PostForm, CommentForm
+from .models import Post, Comment
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 # login_required
@@ -12,8 +12,13 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 def list(request):
     posts = Post.objects.all()
-    return render(request, 'posts/list.html', {'posts': posts})
+    
+    # Comment를 작성하는 form 보여줌
+    form = CommentForm()
+    
+    return render(request, 'posts/list.html', {'posts': posts, 'form': form})
 
+@require_POST
 def create(request):
     if request.method == "POST":
         # 작성된 post를 DB에 적용
@@ -30,7 +35,8 @@ def create(request):
     
 def read(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    return render(request, 'posts/read.html', {'post': post})
+    comments = Comment.objects.filter(post_id=post_id).all()
+    return render(request, 'posts/read.html', {'post': post, 'comments':comments})
 
 def update(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -82,4 +88,18 @@ def like(request, post_id):
     else:
         post.like_users.add(request.user)
         
+    return redirect('posts:list')
+    
+@login_required
+@require_POST # POST 말고는 차단
+def create_comment(request, post_id):
+    # Comment를 만드는 로직
+    post = get_object_or_404(Post, pk=post_id)
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.user = request.user
+        # comment.post_id = post_id # 객체로 하거나 ORM에 맡기거나 둘중에 하나만 하는게 관례
+        comment.post = post
+        comment.save()
     return redirect('posts:list')

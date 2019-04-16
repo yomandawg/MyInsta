@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load bootstrap4 %}
+
 {% block body %}
   <div class="row justify-content-center">
     {% for post in posts %}
@@ -11,14 +13,13 @@
         <img src="{{ post.image.url }}" class="card-img-top" alt="...">
         <div class="card-body">
           <p class="card-text">{{ post.content }}</p>
-          
           <!-- 작성자만 수정/삭제 가능 -->
           {% if post.user == request.user %}
             <a href="{% url 'posts:update' post.id %}" class="btn btn-success">수정</a>
             <a href="{% url 'posts:delete' post.id %}" class="btn btn-danger">삭제</a>
           {% endif %}
-          
         </div>
+        
         <!-- 좋아요 버튼 추가 -->
         <div class="card-body">
           <a href="{% url 'posts:like' post.id %}">
@@ -34,7 +35,30 @@
             {{ post.like_users.count }}명이 좋아합니다.
           </p>
         </div>
-
+        
+        
+        <!-- 로그인한 상태면 -->
+        {% if user.is_authenticated %}
+        <!--댓글 기능 -->
+        <div class="card-body">
+          <form method="POST" action="{% url 'posts:comment' post.id %}">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button type="submit" class="btn btn-info">댓글쓰기</button>
+          </form>
+        </div>
+        <div class="card-body">
+          {% for comment in post.comment_set.all %}
+          <div class="card-text">
+            <strong>{{ comment.user.username }}</strong> {{ comment.content }}
+          </div>
+          <!-- else와 유사한 비어있을 때 조건문 empty -->
+          {% empty %}
+          <div>댓글이 없습니다.</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        
       </div>
     {% endfor %}
   </div>
