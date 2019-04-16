@@ -18,7 +18,7 @@ def list(request):
     
     return render(request, 'posts/list.html', {'posts': posts, 'form': form})
 
-@require_POST
+
 def create(request):
     if request.method == "POST":
         # 작성된 post를 DB에 적용
@@ -102,4 +102,12 @@ def create_comment(request, post_id):
         # comment.post_id = post_id # 객체로 하거나 ORM에 맡기거나 둘중에 하나만 하는게 관례
         comment.post = post
         comment.save()
+    return redirect('posts:list')
+    
+    
+def delete_comment(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    if post.user != request.user:
+        return redirect('posts:list')
+    post.delete()
     return redirect('posts:list')

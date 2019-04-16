@@ -11,5 +11,4 @@ urlpatterns = [
     path('<int:post_id>/delete', views.delete, name="delete"),
     path('<int:post_id>/like', views.like, name="like"), # url엔 post_id만 넘겨주고, user관한 정보는 view에서 처리
     path('<int:post_id>/comment/create/', views.create_comment, name="comment"),
-    # path('<int:post_id>/comment', views.comment, name="comment"),
 ]

@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth import login as auth_login # django에서 가져와 씀
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, update_session_auth_hash
+from .forms import CustomUserChangeForm
 
 
 def login(request):
@@ -49,3 +50,40 @@ def people(request, username):
     # 2. get_user_model() 실제 user클래스를 바로 리턴시켜줌 - 되도록이면 이거 쓰자
     # 3. User (django.contrib.auth.models에 들어가있는) 그냥 가져오기 - 안쓰는게 좋아
     return render(request, 'accounts/people.html', {'people': people})
+    
+    
+# 회원 정보 변경(편집 & 반영)
+def update(request):
+    if request.method == "POST":
+        user_change_form = CustomUserChangeForm(request.POST, instance=request.user)
+        if user_change_form.is_valid():
+            user = user_change_form.save() # save된 객체를 return함
+            return redirect('people', user.username)
+    else: # GET: 지금 로그인한 유저의 현재 정보를 띄워주는 form
+        user_change_form = CustomUserChangeForm(instance=request.user)
+        # 현재 로그인된 정보 but 이것만 출력하면 너무 많아 -> 원하는 정보만 보게 수정해야함
+        # password_change_form = PasswordChangeForm(request.user)
+        # context = {'user_change_form': user_change_form, 'password_change_form': password_change_form} # 서로 다른 페이지로 만들거다
+        context = {'user_change_form': user_change_form}
+        return render(request, 'accounts/update.html', context)
+        
+        
+# 회원 탈퇴
+def delete(request):
+    if request.method == "POST":
+        request.user.delete()
+        return redirect('posts:list')
+    return render(request, 'accounts/delete.html')
+
+
+# 비밀번호 변경
+def password(request):
+    if request.method == "POST":
+        password_change_form = PasswordChangeForm(request.user, request.POST)
+        if password_change_form.is_valid():
+            user = password_change_form.save() # 그냥 이렇게 하면 session 로그아웃됨 -> login상태 유지하려면?
+            update_session_auth_hash(request, user) # auth hash 자동 업데이트 - 로그인 유지
+            return redirect('people', user.username)
+    else:
+        password_change_form = PasswordChangeForm(request.user)
+        return render(request, 'accounts/password.html', {'password_change_form': password_change_form})
