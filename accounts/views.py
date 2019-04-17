@@ -3,7 +3,8 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, User
 from django.contrib.auth import login as auth_login # django에서 가져와 씀
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model, update_session_auth_hash
-from .forms import CustomUserChangeForm, ProfileForm
+from django.contrib.auth.decorators import login_required
+from .forms import CustomUserChangeForm, CustomUserCreationForm, ProfileForm
 from .models import Profile
 
 
@@ -31,7 +32,7 @@ def logout(request):
 def signup(request):
     if request.method == "POST":
         # POST: 유저 등록
-        form = UserCreationForm(request.POST) # UserCreationForm이 알아서 column에 넣어주고
+        form = CustomUserCreationForm(request.POST) # UserCreationForm이 알아서 column에 넣어주고
         if form.is_valid():
             user = form.save()
             Profile.objects.create(user=user) # 1:1 profile도 함께 만들어줌
@@ -40,7 +41,7 @@ def signup(request):
             return redirect('posts:list')
     else:
         # GET: 유저 정보 입력
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
         
     return render(request, 'accounts/signup.html', {'form': form})
     
@@ -103,3 +104,17 @@ def password(request):
     else:
         password_change_form = PasswordChangeForm(request.user)
         return render(request, 'accounts/password.html', {'password_change_form': password_change_form})
+        
+# 팔로우 기능
+@login_required
+def follow(request, user_id):
+    person = get_object_or_404(get_user_model(), pk=user_id)
+    # 만약 현재 유저가 해당 유저를 이미 팔로우 하고 있었으면,
+    # -> 팔로우 취소
+    # 아니면,
+    # -> 팔로우
+    if request.user in person.follows.all():
+        person.follows.remove(request.user)
+    else:
+        person.follows.add(request.user)
+    return redirect('people', person.username)

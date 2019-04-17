@@ -2,7 +2,14 @@
 
 {% block body %}
 <div class="container">
-  <h1>{{ people.username }}</h1>
+  <h1>
+    {{ people.username }} 
+    {% if not user.is_anonymous and user != people %}
+      {% if user in people.follows.all %}<a class="btn btn-success" href="{% url 'accounts:follow' people.id %}">Following</a>
+      {% else %}<a class="btn btn-primary" href="{% url 'accounts:follow' people.id %}">Follow</a>{% endif %}
+    {% endif %}
+  </h1>
+  
   <p>{{ people.first_name }} {{ people.last_name }}</p>
   <strong>{{ people.profile.nickname }}</strong>
   <p>{{ people.profile.description }}</p>
@@ -11,6 +18,7 @@
   <a class="btn btn-info" href="{% url 'accounts:password' %}">비밀번호 변경</a>
   <a class="btn btn-danger" href="{% url 'accounts:delete' %}">회원 탈퇴</a>
   {% endif %}
+  
   <div class="row">
     {% for post in people.post_set.all %}
     <div class="col-4">
@@ -18,5 +26,8 @@
     </div>
     {% endfor %}
   </div>
+  
+  <strong>followers</strong>
+  <p>{% for person in people.follows.all %}{{ person.username }} {% endfor %}</p>
 </div>
 {% endblock %}

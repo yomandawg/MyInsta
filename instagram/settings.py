@@ -127,3 +127,6 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 #실제 저장장소
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# user override
+AUTH_USER_MODEL = "accounts.User"
