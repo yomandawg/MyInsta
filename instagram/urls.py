@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from posts import views as posts_views
 from accounts import views as accounts_views
 
 urlpatterns = [
+    path('', posts_views.list, name="root"), # 아무것도 없으면 바로 가게해
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls')),
     path('accounts/', include('accounts.urls')),

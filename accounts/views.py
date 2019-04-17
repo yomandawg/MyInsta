@@ -3,7 +3,8 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, User
 from django.contrib.auth import login as auth_login # django에서 가져와 씀
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model, update_session_auth_hash
-from .forms import CustomUserChangeForm
+from .forms import CustomUserChangeForm, ProfileForm
+from .models import Profile
 
 
 def login(request):
@@ -33,6 +34,7 @@ def signup(request):
         form = UserCreationForm(request.POST) # UserCreationForm이 알아서 column에 넣어주고
         if form.is_valid():
             user = form.save()
+            Profile.objects.create(user=user) # 1:1 profile도 함께 만들어줌
             # auth_login(request, form.get_user()) 로그인과 달리 form 형식 달라서 이거 안됨
             auth_login(request, user) # signup 후 바로 로그인
             return redirect('posts:list')
@@ -56,15 +58,29 @@ def people(request, username):
 def update(request):
     if request.method == "POST":
         user_change_form = CustomUserChangeForm(request.POST, instance=request.user)
-        if user_change_form.is_valid():
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        if user_change_form.is_valid() and profile_form.is_valid():
             user = user_change_form.save() # save된 객체를 return함
+            profile_form.save()
             return redirect('people', user.username)
     else: # GET: 지금 로그인한 유저의 현재 정보를 띄워주는 form
         user_change_form = CustomUserChangeForm(instance=request.user)
+        
+        # instance에넣어줄 정보가 있는 User가 있고, 없는 User도 있다.
+        # if Profile.objects.get(user=request): # 프로필이 있냐 없냐
+        #     profile = Profile.objects.get(user=request) # 있으면 가져와
+        # else:
+        #     profile = Profile.objects.create(user=request.user) # 유저의 정보가 들어있는 비어있는 profile
+        profile, created = Profile.objects.get_or_create(user=request.user) # return이 tuple형 (get성공, created)
+        profile_form = ProfileForm(instance=profile) # profile도 같이 수정해주기
+        
         # 현재 로그인된 정보 but 이것만 출력하면 너무 많아 -> 원하는 정보만 보게 수정해야함
         # password_change_form = PasswordChangeForm(request.user)
         # context = {'user_change_form': user_change_form, 'password_change_form': password_change_form} # 서로 다른 페이지로 만들거다
-        context = {'user_change_form': user_change_form}
+        context = {
+            'user_change_form': user_change_form,
+            'profile_form': profile_form,
+        }
         return render(request, 'accounts/update.html', context)
         
         

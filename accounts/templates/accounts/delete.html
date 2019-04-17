@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block body %}
-  <form method="POST">
-    {% csrf_token %}
-    <p>정말로 탈퇴하시겠습니까?</p>
-    <button class="btn btn-danger" type="submit">Continue</button>
-  </form>
+<form method="POST">
+  {% csrf_token %}
+  <p>정말로 탈퇴하시겠습니까?</p>
+  <button class="btn btn-danger" type="submit">Continue</button>
+</form>
 {% endblock %}
