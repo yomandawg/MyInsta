@@ -10,7 +10,7 @@ class Post(models.Model):
     # image = models.ImageField(blank=True)
     
     # resized image
-    image = ProcessedImageField(blank=True, processors=[ResizeToFit(width=960, upscale=False)], format='JPEG')
+    image = ProcessedImageField(processors=[ResizeToFit(width=960, upscale=False)], format='JPEG')
     image_thumbnail = ImageSpecField(source='image', processors=[ResizeToFit(width=320, upscale=False)], format='JPEG', options={'quality': 60})
     # date option
     created_at = models.DateTimeField(auto_now_add=True)
