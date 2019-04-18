@@ -1,11 +1,21 @@
 from django.db import models
 # from django.contrib.auth.models import User # 직접 접근
 from django.conf import settings
+from imagekit.models import ProcessedImageField, ImageSpecField
+from imagekit.processors import ResizeToFit
 
 # Create your models here.
 class Post(models.Model):
     content = models.CharField(max_length=150)
-    image = models.ImageField(blank=True)
+    # image = models.ImageField(blank=True)
+    
+    # resized image
+    image = ProcessedImageField(blank=True, processors=[ResizeToFit(width=960, upscale=False)], format='JPEG')
+    image_thumbnail = ImageSpecField(source='image', processors=[ResizeToFit(width=320, upscale=False)], format='JPEG', options={'quality': 60})
+    # date option
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     # user = models.ForeignKey(User, on_delete=models.CASCADE) #User 폼 변경하려면 상속받아서 다르게 짜야함
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # user foreign_key를 불러오므로 user_id 키가 있을 것
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_posts", blank=True) # user와 M:M 관계

@@ -11,6 +11,7 @@ from django.db.models import Q
 
 
 # Create your views here.
+@login_required
 def list(request):
     # posts = Post.objects.all()
     
