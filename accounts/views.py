@@ -59,7 +59,7 @@ def people(request, username):
 def update(request):
     if request.method == "POST":
         user_change_form = CustomUserChangeForm(request.POST, instance=request.user)
-        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile, files=request.FILES)
         if user_change_form.is_valid() and profile_form.is_valid():
             user = user_change_form.save() # save된 객체를 return함
             profile_form.save()

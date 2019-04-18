@@ -17,4 +17,4 @@ class CustomUserCreationForm(UserCreationForm): # custom User model을 위한 cr
 class ProfileForm(forms.ModelForm): # user profile 수정하기 위해
     class Meta:
         model = Profile
-        fields = ['description', 'nickname']
+        fields = ['description', 'nickname', 'image']

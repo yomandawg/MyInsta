@@ -7,6 +7,7 @@ class Profile(models.Model): # user_id와 1:1 관계
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     description = models.TextField(blank=True)
     nickname = models.CharField(max_length=40, blank=True)
+    image = models.ImageField(blank=True)
     
 class User(AbstractUser): # 앞으로 정의한 유저는 이것 -> settings.py에서 django에게 알려줘야해
     follows = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="followings") #related name
