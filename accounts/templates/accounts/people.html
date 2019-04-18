@@ -5,7 +5,8 @@
   <h1>
     {{ people.username }} 
     {% if not user.is_anonymous and user != people %}
-      {% if user in people.follows.all %}<a class="btn btn-success" href="{% url 'accounts:follow' people.id %}">Following</a>
+      <!-- 만약 현재 접속한 유저가 해당 페이지의 유저를 이미 팔로우 한 경우 following else follow -->
+      {% if user in people.follows.all %}<a class="btn btn-outline-primary" href="{% url 'accounts:follow' people.id %}">Following</a>
       {% else %}<a class="btn btn-primary" href="{% url 'accounts:follow' people.id %}">Follow</a>{% endif %}
     {% endif %}
   </h1>

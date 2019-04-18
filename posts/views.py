@@ -3,6 +3,7 @@ from .forms import PostForm, CommentForm
 from .models import Post, Comment
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 # login_required
 # 1. 유저가 로그인 안했으면, 로그인창으로 보냄 - default = accounts
 # 2. "https://sitback-sitback.c9users.io/accounts/login/?next=/posts/1/like"
@@ -11,7 +12,22 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def list(request):
-    posts = Post.objects.all()
+    # posts = Post.objects.all()
+    
+    # # 1. 내가 팔로우한 사람들의 Post만 보여줌
+    # posts = Post.objects.filter(user_id__in=request.user.follows.all()) # filter 여러개 return
+    # # print('posts: ', posts.query) # query문 확인
+    # # 2. (1) + 내가 작성한 Post도 보여줌
+    # my_posts = request.user.post_set.all()
+    # # print('my_posts: ', my_posts.query)
+    # posts += my_posts
+    
+    # query 여러 개를 합치는 Q
+    posts = Post.objects.filter(
+        Q(user_id__in=request.user.followings.all()) | # related_name='followings'
+        Q(user_id=request.user)
+        )
+    # print('fin_posts: ', posts.query)
     
     # Comment를 작성하는 form 보여줌
     form = CommentForm()
