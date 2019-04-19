@@ -37,9 +37,9 @@
         </div>
         
         
-        <!-- 로그인한 상태면 -->
-        {% if user.is_authenticated %}
         <!--댓글 기능 -->
+        <!-- 로그인한 상태면 댓글 쓰기 -->
+        {% if user.is_authenticated %}
         <div class="card-body">
           <form method="POST" action="{% url 'posts:comment' post.id %}">
             {% csrf_token %}
@@ -47,17 +47,22 @@
             <button type="submit" class="btn btn-info">댓글쓰기</button>
           </form>
         </div>
+        {% endif %}
+        
         <div class="card-body">
           {% for comment in post.comment_set.all %}
           <div class="card-text">
             <strong>{{ comment.user.username }}</strong> {{ comment.content }}
+            <!-- Comment 지우기 -->
+            {% if comment.user == request.user %}
+              <a href="{% url 'posts:delete_comment' post.id comment.id %}">[X]</a>
+            {% endif %}
           </div>
           <!-- else와 유사한 비어있을 때 조건문 empty -->
           {% empty %}
           <div>댓글이 없습니다.</div>
           {% endfor %}
         </div>
-        {% endif %}
         
       </div>
     {% endfor %}

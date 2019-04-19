@@ -119,7 +119,11 @@ def create_comment(request, post_id):
         comment.post = post
         comment.save()
     return redirect('posts:list')
+
+@login_required
+def delete_comment(request, post_id, comment_id):
+    comment = get_object_or_404(Comment, pk=comment_id)
+    if comment.user == request.user:
+        comment.delete()
+    return redirect('posts:list')
     
-    
-def delete_comment(request, post_id):
-    pass
