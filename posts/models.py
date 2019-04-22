@@ -34,3 +34,13 @@ class Comment(models.Model):
     
     def __str__(self):
         return self.content
+        
+        
+# ADD HASHTAG 기능
+# class Post(models.Model):
+#     title = models.CharField(max_length=100)
+#     content = models.CharField(max_length=300)
+#     hashtag = models.ManyToManyField(Hashtag)
+    
+# class Hashtag(models.Model):
+#     content = models.CharField(max_length=50)
