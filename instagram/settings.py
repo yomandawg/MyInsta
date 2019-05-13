@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,11 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'posts',
-    'accounts',
     'bootstrap4',
     'django_extensions',
-    'imagekit'
+    'imagekit',
+    'posts',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -129,7 +130,11 @@ MEDIA_URL = '/media/'
 #실제 저장장소
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 # user override
 AUTH_USER_MODEL = "accounts.User"
 
 # LOGIN_URL = "/users/login" # default login url
+
+django_heroku.settings(locals()) # 현재 환경을 load하겠다
