@@ -3,9 +3,9 @@
 
 
 ## I. 개요
-- url : https://sitback-sitback.c9users.io
+- url : https://fierce-anchorage-48734.herokuapp.com/
 
 
-## II. 기술
-
-
+## II. 스택
+- Django
+- Vue.js
